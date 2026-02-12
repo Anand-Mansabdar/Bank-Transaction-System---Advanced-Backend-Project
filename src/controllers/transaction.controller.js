@@ -93,6 +93,17 @@ const createTransaction = async (req, res) => {
   /**
    * 4. Deriving Sender Balance from ledger
    */
+  const balance = await fromUserAccount.getBalance();
+
+  if (balance < amount) {
+    return res.status(400).json({
+      message: `Insufficient balance. Current balance is ${balance}. Requested amount is ${amount}`,
+    });
+  }
+
+  /**
+   * 5. Creating a transaction (PENDING State)
+   */
 };
 
 module.exports = { createTransaction };
