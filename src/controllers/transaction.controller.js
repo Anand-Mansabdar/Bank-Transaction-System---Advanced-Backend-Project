@@ -43,6 +43,40 @@ const createTransaction = async (req, res) => {
       message: "Invalid fromAccount or toAccount",
     });
   }
+
+  /**
+   * STEP 2 - Validate Idempotency Key
+   */
+  const transactionExists = await transactionModel.findOne({
+    idempotencyKey: idempotencyKey,
+  });
+
+  if (transactionExists) {
+    if (transactionExists.status == "COMPLETED") {
+      return res.status(200).json({
+        message: "Transaction already completed",
+        transaction: transactionExists,
+      });
+    }
+
+    if (transactionExists.status == "PENDING") {
+      res.status(200).json({
+        message: "Transaction is still processing",
+      });
+    }
+
+    if (transactionExists.status == "FAILED") {
+      res.status(500).json({
+        message: "Transaction processing failed",
+      });
+    }
+
+    if (transactionExists.status == "REVERSED") {
+      res.status(500).json({
+        message: "Transaction was reversed. Try again",
+      });
+    }
+  }
 };
 
 module.exports = { createTransaction };
