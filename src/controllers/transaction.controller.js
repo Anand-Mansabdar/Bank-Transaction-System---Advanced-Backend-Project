@@ -60,23 +60,39 @@ const createTransaction = async (req, res) => {
     }
 
     if (transactionExists.status == "PENDING") {
-      res.status(200).json({
+      return res.status(200).json({
         message: "Transaction is still processing",
       });
     }
 
     if (transactionExists.status == "FAILED") {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Transaction processing failed",
       });
     }
 
     if (transactionExists.status == "REVERSED") {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Transaction was reversed. Try again",
       });
     }
   }
+
+  /**
+   * 3. Check account status
+   */
+  if (
+    fromUserAccount.status !== "ACTIVE" ||
+    toUserAccount.status !== "ACTIVE"
+  ) {
+    return res.status(400).json({
+      message: "Inactive fromAccount or toAccount",
+    });
+  }
+
+  /**
+   * 4. Deriving Sender Balance from ledger
+   */
 };
 
 module.exports = { createTransaction };
