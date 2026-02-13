@@ -5,6 +5,7 @@ const { authMiddleware } = require("../middlewares/auth.middleware");
 const {
   createAccount,
   getUserAccounts,
+  getAccountBalance,
 } = require("../controllers/account.controller");
 
 /**
@@ -20,5 +21,7 @@ router.post("/", authMiddleware, createAccount);
  * Protected Route
  */
 router.get("/", authMiddleware, getUserAccounts);
+
+router.get("/balance/:accountId", authMiddleware, getAccountBalance);
 
 module.exports = router;
