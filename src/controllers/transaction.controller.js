@@ -146,10 +146,20 @@ const createTransaction = async (req, res) => {
   await session.commitTransaction();
   session.endSession();
 
-
   /**
    * 10 - Sending email confirmation
    */
+  await emailService.sendTransactionEmail(
+    req.user.email,
+    req.user.name,
+    amount,
+    toAccount._id,
+  );
+
+  return res.status(201).json({
+    message: "Transaction successfully completed",
+    transaction: transaction,
+  });
 };
 
 module.exports = { createTransaction };
