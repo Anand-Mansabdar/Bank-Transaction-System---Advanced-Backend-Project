@@ -12,4 +12,12 @@ const createAccount = async (req, res) => {
   });
 };
 
-module.exports = { createAccount };
+const getUserAccounts = async (req, res) => {
+  const accounts = await accountModel.find({ user: req.user._id });
+
+  return res.status(200).json({
+    accounts,
+  });
+};
+
+module.exports = { createAccount, getUserAccounts };
